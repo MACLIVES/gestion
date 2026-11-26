@@ -30,7 +30,7 @@ function clienteForm(c = {}, onSaved) {
         <div class="field"><label>Email</label><input name="email" type="email" value="${esc(c.email)}"></div></div>
       <div class="field"><label>Persona de contacto</label><input name="contacto" value="${esc(c.contacto)}"></div>
       <div class="field"><label>Dirección fiscal</label><input name="direccion" value="${esc(c.direccion)}"></div>
-      <div class="row"><div class="field"><label>Población</label><input name="poblacion" value="${esc(c.poblacion ?? 'Málaga')}"></div>
+      <div class="row row-2"><div class="field"><label>Población</label><input name="poblacion" value="${esc(c.poblacion ?? 'Málaga')}"></div>
         <div class="field"><label>CP</label><input name="cp" value="${esc(c.cp)}"></div></div>
       <div class="field"><label>Notas</label><textarea name="notas">${esc(c.notas)}</textarea></div>
       ${c.id ? `<label class="check"><input type="checkbox" name="activo" ${c.activo ? 'checked' : ''}>Cliente activo</label>` :
@@ -78,11 +78,11 @@ async function viewCliente(v, id) {
         <div class="card-head" style="margin-bottom:6px"><div><h3 style="margin:0">${esc(i.nombre)}</h3>
           <div class="small muted">${esc([i.direccion, i.poblacion].filter(Boolean).join(', '))}${i.acceso ? ' · Acceso: ' + esc(i.acceso) : ''}</div></div>
           <div class="row">${isOficina() ? `<button class="btn-sm btn-ghost" data-ei="${i.id}">Editar</button>` : ''}<button class="btn-sm btn-ghost" data-ne="${i.id}">+ Equipo</button></div></div>
-        ${i.equipos.length ? `<div class="tbl-wrap"><table class="tbl"><tr><th>Equipo</th><th>Ubicación</th><th>Gas</th><th>Nº serie</th><th>Instalado</th><th></th></tr>
-          ${i.equipos.map(e => `<tr><td><b>${esc(e.tipo)}</b> ${esc([e.marca, e.modelo].filter(Boolean).join(' '))}${e.potencia_kw ? ' · ' + e.potencia_kw + ' kW' : ''}</td>
-            <td>${esc(e.ubicacion || '')}</td><td>${esc(e.refrigerante || '')}${e.carga_kg ? ' · ' + e.carga_kg + ' kg' : ''}</td>
-            <td>${esc(e.num_serie || '')}</td><td>${fDate(e.fecha_instalacion)}</td>
-            <td>${isOficina() ? `<button class="btn-sm btn-ghost" data-ee="${e.id}">Editar</button>` : ''}</td></tr>`).join('')}</table></div>`
+        ${i.equipos.length ? `<div class="tbl-wrap"><table class="tbl resp"><tr><th>Equipo</th><th>Ubicación</th><th>Gas</th><th>Nº serie</th><th>Instalado</th><th></th></tr>
+          ${i.equipos.map(e => `<tr><td data-label="Equipo"><b>${esc(e.tipo)}</b> ${esc([e.marca, e.modelo].filter(Boolean).join(' '))}${e.potencia_kw ? ' · ' + e.potencia_kw + ' kW' : ''}</td>
+            <td data-label="Ubicación">${esc(e.ubicacion || '—')}</td><td data-label="Gas">${esc(e.refrigerante || '—')}${e.carga_kg ? ' · ' + e.carga_kg + ' kg' : ''}</td>
+            <td data-label="Nº serie">${esc(e.num_serie || '—')}</td><td data-label="Instalado">${fDate(e.fecha_instalacion)}</td>
+            <td class="td-acciones">${isOficina() ? `<button class="btn-sm btn-ghost" data-ee="${e.id}">Editar</button>` : ''}</td></tr>`).join('')}</table></div>`
           : '<div class="empty small">Sin equipos registrados</div>'}</div>`).join('') || '<div class="empty">Sin instalaciones</div>'}
     </div>
     <div class="card"><h2>Últimos avisos</h2><div class="list">${avisos.map(avisoItem).join('') || '<div class="empty">Sin avisos</div>'}</div></div>`;
@@ -101,7 +101,7 @@ function instalacionForm(i = {}) {
     <form id="fi">
       <div class="field"><label>Nombre *</label><input name="nombre" required value="${esc(i.nombre)}" placeholder="Ej.: Local C/ Larios, Planta 2…"></div>
       <div class="field"><label>Dirección</label><input name="direccion" value="${esc(i.direccion)}"></div>
-      <div class="row"><div class="field"><label>Población</label><input name="poblacion" value="${esc(i.poblacion ?? 'Málaga')}"></div>
+      <div class="row row-2"><div class="field"><label>Población</label><input name="poblacion" value="${esc(i.poblacion ?? 'Málaga')}"></div>
         <div class="field"><label>CP</label><input name="cp" value="${esc(i.cp)}"></div></div>
       <div class="row"><div class="field"><label>Contacto en sitio</label><input name="contacto" value="${esc(i.contacto)}"></div>
         <div class="field"><label>Teléfono</label><input name="telefono" type="tel" value="${esc(i.telefono)}"></div></div>
@@ -133,11 +133,11 @@ function equipoForm(e = {}, onSaved) {
       <div class="row"><div class="field"><label>Marca</label><input name="marca" value="${esc(e.marca)}" list="marcas"></div>
         <div class="field"><label>Modelo</label><input name="modelo" value="${esc(e.modelo)}"></div></div>
       <datalist id="marcas">${['Daikin', 'Mitsubishi Electric', 'Fujitsu', 'LG', 'Samsung', 'Panasonic', 'Toshiba', 'Hitachi', 'Carrier', 'Gree', 'Haier', 'Midea', 'Hisense', 'Baxi', 'Saunier Duval', 'Ferroli', 'Vaillant'].map(m => `<option value="${m}">`).join('')}</datalist>
-      <div class="row"><div class="field"><label>Nº de serie</label><input name="num_serie" value="${esc(e.num_serie)}"></div>
+      <div class="row row-2"><div class="field"><label>Nº de serie</label><input name="num_serie" value="${esc(e.num_serie)}"></div>
         <div class="field"><label>Potencia (kW)</label><input name="potencia_kw" type="number" step="0.01" value="${e.potencia_kw ?? ''}"></div></div>
-      <div class="row"><div class="field"><label>Refrigerante</label><select name="refrigerante">${optsArr(REFRIGERANTES, e.refrigerante, '—')}</select></div>
+      <div class="row row-2"><div class="field"><label>Refrigerante</label><select name="refrigerante">${optsArr(REFRIGERANTES, e.refrigerante, '—')}</select></div>
         <div class="field"><label>Carga (kg)</label><input name="carga_kg" type="number" step="0.01" value="${e.carga_kg ?? ''}"></div></div>
-      <div class="row"><div class="field"><label>Fecha instalación</label><input name="fecha_instalacion" type="date" value="${esc(e.fecha_instalacion)}"></div>
+      <div class="row row-2"><div class="field"><label>Fecha instalación</label><input name="fecha_instalacion" type="date" value="${esc(e.fecha_instalacion)}"></div>
         <div class="field"><label>Garantía hasta</label><input name="garantia_hasta" type="date" value="${esc(e.garantia_hasta)}"></div></div>
       <div class="field"><label>Notas</label><textarea name="notas">${esc(e.notas)}</textarea></div>
       <div class="actions"><button type="button" class="btn-ghost" data-close>Cancelar</button><button>Guardar</button></div>

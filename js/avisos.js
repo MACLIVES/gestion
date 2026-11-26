@@ -48,7 +48,7 @@ async function avisoForm(a = {}, preset = {}) {
         <div class="field"><label>Equipo</label><select name="equipo_id">${optsRows(eqs, a.equipo_id || preset.equipo_id, '— Equipo (opcional) —', equipoLabel)}</select></div></div>
       <div class="field"><label>Título / síntoma *</label><input name="titulo" required value="${esc(a.titulo)}" placeholder="Ej.: No enfría, gotea, salta el diferencial…"></div>
       <div class="field"><label>Descripción</label><textarea name="descripcion">${esc(a.descripcion)}</textarea></div>
-      <div class="row">
+      <div class="row row-2">
         <div class="field"><label>Tipo</label><select name="tipo">${opts(TIPOS_AVISO, a.tipo || 'averia')}</select></div>
         <div class="field"><label>Prioridad</label><select name="prioridad">${opts(PRIORIDADES, a.prioridad || 'normal')}</select></div></div>
       <div class="row">

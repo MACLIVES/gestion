@@ -55,7 +55,7 @@ async function viewParteForm(v, id, params) {
           <div class="field"><label>Fecha</label><input type="date" name="fecha" value="${esc(p.fecha)}" required></div>
           ${isOficina() ? `<div class="field"><label>Técnico</label><select name="tecnico_id" required>${optsRows(tecnicos, p.tecnico_id)}</select></div>` : ''}
         </div>
-        <div class="row">
+        <div class="row row-3">
           <div class="field"><label>Hora inicio</label><input type="time" name="hora_inicio" value="${esc((p.hora_inicio || '').slice(0, 5))}"></div>
           <div class="field"><label>Hora fin</label><input type="time" name="hora_fin" value="${esc((p.hora_fin || '').slice(0, 5))}"></div>
           <div class="field"><label>Horas</label><input type="number" step="0.25" min="0" name="horas" value="${p.horas ?? ''}" placeholder="auto"></div>
@@ -68,7 +68,7 @@ async function viewParteForm(v, id, params) {
 
       <div class="card" id="ckCard" ${p.checklist?.length ? '' : 'style="display:none"'}><h2>Checklist de mantenimiento</h2><div id="ck"></div></div>
 
-      <div class="card"><h2>Gas refrigerante</h2><div class="row">
+      <div class="card"><h2>Gas refrigerante</h2><div class="row row-gas">
         <div class="field"><label>Tipo</label><select name="gas_tipo">${optsArr(REFRIGERANTES, p.gas_tipo, '— Ninguno —')}</select></div>
         <div class="field"><label>Cargado (kg)</label><input type="number" step="0.01" min="0" name="gas_kg_cargado" value="${p.gas_kg_cargado ?? ''}"></div>
         <div class="field"><label>Recuperado (kg)</label><input type="number" step="0.01" min="0" name="gas_kg_recuperado" value="${p.gas_kg_recuperado ?? ''}"></div>

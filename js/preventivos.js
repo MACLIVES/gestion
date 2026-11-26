@@ -38,15 +38,15 @@ async function viewPreventivos(v, _id, params) {
     if (f === 'pendientes') qq = qq.in('estado', ['pendiente', 'programada']);
     if (f === 'realizadas') qq = qq.eq('estado', 'realizada').order('fecha_prevista', { ascending: false });
     const rows = await q(qq);
-    $('#rl').innerHTML = rows.length ? `<table class="tbl"><tr><th>Fecha</th><th>Cliente / instalación</th><th>Técnico</th><th>Estado</th><th></th></tr>
+    $('#rl').innerHTML = rows.length ? `<table class="tbl resp"><tr><th>Fecha</th><th>Cliente / instalación</th><th>Técnico</th><th>Estado</th><th></th></tr>
       ${rows.map(r => {
         const venc = r.fecha_prevista < hoy && ['pendiente', 'programada'].includes(r.estado);
         const c = r.contratos || {};
-        return `<tr><td>${fDate(r.fecha_prevista)}</td>
-          <td><a href="#/contrato/${c.id}">${esc(c.clientes?.nombre)}</a><div class="small muted">${esc(c.instalaciones?.nombre || '')} ${esc(c.instalaciones?.poblacion || '')}</div></td>
-          <td>${isOficina() && r.estado !== 'realizada' ? `<select data-rt="${r.id}" style="min-width:140px">${optsRows(tecnicos, r.tecnico_id, '— Sin asignar —')}</select>` : esc(tecnicos.find(t => t.id === r.tecnico_id)?.nombre || (r.tecnico_id === S.me.id ? S.me.nombre : '—'))}</td>
-          <td>${venc ? '<span class="badge b-vencida">Vencida</span>' : badge(r.estado, ESTADOS_REV)}</td>
-          <td style="white-space:nowrap">${r.parte_id ? `<a class="btn btn-sm btn-ghost" href="#/parte/${r.parte_id}">Ver parte</a>`
+        return `<tr class="${venc ? 'fila-vencida' : ''}"><td data-label="Fecha"><b>${fDate(r.fecha_prevista)}</b></td>
+          <td data-label="Cliente"><a href="#/contrato/${c.id}">${esc(c.clientes?.nombre)}</a><div class="small muted">${esc(c.instalaciones?.nombre || '')} ${esc(c.instalaciones?.poblacion || '')}</div></td>
+          <td data-label="Técnico">${isOficina() && r.estado !== 'realizada' ? `<select data-rt="${r.id}" >${optsRows(tecnicos, r.tecnico_id, '— Sin asignar —')}</select>` : esc(tecnicos.find(t => t.id === r.tecnico_id)?.nombre || (r.tecnico_id === S.me.id ? S.me.nombre : '—'))}</td>
+          <td data-label="Estado">${venc ? '<span class="badge b-vencida">Vencida</span>' : badge(r.estado, ESTADOS_REV)}</td>
+          <td class="td-acciones">${r.parte_id ? `<a class="btn btn-sm btn-ghost" href="#/parte/${r.parte_id}">Ver parte</a>`
             : ['pendiente', 'programada'].includes(r.estado) ? `<a class="btn btn-sm btn-ice" href="#/parte-editar?revision=${r.id}">Hacer parte</a>` : ''}</td></tr>`;
       }).join('')}</table>` : '<div class="empty">No hay revisiones en este filtro</div>';
     $$('[data-rt]').forEach(s => s.onchange = async () => {
@@ -69,7 +69,7 @@ async function contratoForm(c = {}, preset = {}) {
       <div class="field"><label>Instalación</label><select name="instalacion_id">${optsRows(inst, c.instalacion_id || preset.instalacion_id || (inst.length === 1 ? inst[0].id : null), '— Todas / sin especificar —')}</select></div>
       <div class="row"><div class="field"><label>Referencia</label><input name="referencia" value="${esc(c.referencia)}" placeholder="Ej.: MNT-2027-014"></div>
         <div class="field"><label>Revisión cada (meses)</label><select name="periodicidad_meses">${opts({ 1: 'Mensual', 2: 'Bimestral', 3: 'Trimestral', 4: 'Cuatrimestral', 6: 'Semestral', 12: 'Anual' }, String(c.periodicidad_meses || 6))}</select></div></div>
-      <div class="row"><div class="field"><label>Inicio *</label><input type="date" name="fecha_inicio" required value="${esc(c.fecha_inicio || today())}"></div>
+      <div class="row row-2"><div class="field"><label>Inicio *</label><input type="date" name="fecha_inicio" required value="${esc(c.fecha_inicio || today())}"></div>
         <div class="field"><label>Fin</label><input type="date" name="fecha_fin" value="${esc(c.fecha_fin)}"></div>
         <div class="field"><label>Importe anual (€)</label><input type="number" step="0.01" name="importe_anual" value="${c.importe_anual ?? ''}"></div></div>
       <div class="field"><label>Descripción / alcance</label><textarea name="descripcion">${esc(c.descripcion)}</textarea></div>

@@ -13,6 +13,9 @@ const I = {
 };
 const icon = n => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
 
+// Iniciales para el botón "Mi cuenta" de la cabecera del móvil: "Ana Oficina" → "AO"
+const iniciales = n => (n || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+
 function renderShell() {
   const links = [
     ['panel', 'Inicio', 'panel'],
@@ -32,12 +35,24 @@ function renderShell() {
     </aside>
     <div>
       <div class="topbar"><img class="logo-img abre-acerca-de" src="icon-192.png" alt="MACLIVE" style="width:30px;height:30px"><div class="brand-name">${esc(EMP.nombre)} <span class="app-version-top">${APP_VERSION_ACTUAL ? 'v' + esc(APP_VERSION_ACTUAL) : ''}</span></div>
-        ${isAdmin() ? '<a class="btn btn-sm btn-ghost" href="#/usuarios" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.3)">Usuarios</a>' : ''}
-        <button class="btn-sm" id="logout2">Salir</button></div>
+        <button class="mi-cuenta-btn" id="miCuenta" aria-label="Mi cuenta">${esc(iniciales(S.me.nombre))}</button></div>
       <main id="view"></main>
     </div></div>`;
   const out = async () => { if (await confirmar('¿Cerrar sesión?')) sb.auth.signOut(); };
-  $('#logout').onclick = out; $('#logout2').onclick = out;
+  $('#logout').onclick = out;
+  $('#miCuenta').onclick = () => openModal(`
+    <div class="mi-cuenta">
+      <div class="mi-cuenta-avatar">${esc(iniciales(S.me.nombre))}</div>
+      <div><b>${esc(S.me.nombre)}</b><div class="muted small">${esc(S.me.email || '')}</div><div class="muted small">${ROLES[S.me.rol]}</div></div>
+    </div>
+    <div class="list" style="margin-top:12px">
+      ${isAdmin() ? `<a class="item" href="#/usuarios" data-close>${icon('users')}<div class="main"><div class="t">Usuarios</div><div class="s">Activar usuarios y asignar rol</div></div></a>` : ''}
+      <a class="item abre-acerca-de" href="#" data-close><img src="icon-192.png" alt="" style="width:24px;height:24px;border-radius:6px"><div class="main"><div class="t">Acerca de MACLIVE</div><div class="s">${APP_VERSION_ACTUAL ? 'Versión ' + esc(APP_VERSION_ACTUAL) : ''}</div></div></a>
+    </div>
+    <div class="actions"><button class="btn-ghost" data-close>Cerrar</button><button class="btn-danger" id="out2">Cerrar sesión</button></div>`, m => {
+      $('#out2', m).onclick = () => { modal.close(); sb.auth.signOut(); };
+      $$('a[href="#"]', m).forEach(a => a.addEventListener('click', e => e.preventDefault()));
+    });
 }
 
 
