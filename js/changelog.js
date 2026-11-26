@@ -10,13 +10,6 @@
 // ---------------------------------------------------------------
 const CHANGELOG_MACLIVE = [
   {
-    version: '1.0.1',
-    fecha: '2026-11-26',
-    cambios: [
-      { tipo: 'correccion', texto: 'Las pantallas ocupan todo el ancho de la ventana en monitores grandes (antes quedaba un hueco vacío a la derecha)' }
-    ]
-  },
-  {
     version: '1.0.0',
     fecha: '2026-11-26',
     cambios: [

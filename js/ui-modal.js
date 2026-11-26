@@ -9,7 +9,15 @@ function openModal(html, onReady) {
   $$('[data-close]', modal).forEach(b => b.addEventListener('click', () => modal.close()));
   onReady && onReady(modal);
 }
-modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
+// Un clic fuera de la ventana NO la cierra (solo sus botones Cancelar / Cerrar):
+// la ventana da un pequeño "toque" para indicar que hay que usar sus botones.
+modal.addEventListener('click', e => {
+  if (e.target !== modal) return;
+  const box = modal.querySelector('.modal-body');
+  if (box && box.animate && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    box.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.02)' }, { transform: 'scale(1)' }], { duration: 240, easing: 'ease-out' });
+  }
+});
 
 function confirmar(msg) {
   return new Promise(res => {
